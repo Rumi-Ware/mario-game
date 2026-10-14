@@ -87,7 +87,7 @@ class Sounds:
                 "complete": [(523, 0.1), (659, 0.1), (784, 0.1), (1047, 0.2)],
             }
             self.sounds = {name: pygame.mixer.Sound(buffer=make_tone(notes, rate=rate, channels=channels))
-                           for name, notes in recipes.items()}
+                            for name, notes in recipes.items()}
             self.enabled = True
         except (pygame.error, OSError):
             self.enabled = False      # no sound device: the game simply stays silent
@@ -134,6 +134,21 @@ class Game:
         self.show_help = False
         self.time = 0.0
         self.menu_world = W.World(levels.LEVELS[0]["rows"])
+        # Load the player character image
+        image_path = os.path.join(
+            os.path.dirname(os.path.abspath(__file__)),
+            "screenshots",
+            "yahya_salman.png"
+        )
+
+        self.player_image = pygame.image.load(
+            image_path
+        ).convert_alpha()
+
+        self.player_image = pygame.transform.scale(
+            self.player_image,
+            (W.PLAYER_W, W.PLAYER_H)
+        )
 
     # ---------- Game flow ----------
 
@@ -259,7 +274,19 @@ class Game:
             y = 60 + (i * 53) % 130
             for dx, dy, r in [(0, 0, 26), (28, 8, 20), (-28, 10, 18), (10, 14, 22)]:
                 pygame.draw.circle(surface, (255, 255, 255), (int(x + dx), int(y + dy)), r)
+        self.draw_rumiware(surface) 
+        
+        
+    def draw_rumiware(self, surface):
+        font = pygame.font.SysFont("poppins", 64, bold=True)
 
+        text = font.render("RUMIWARE", True, (255, 255, 255))
+        text.set_alpha(70)  # Make the text transparent
+
+        rect = text.get_rect(center=(WIDTH // 2, 100))
+        surface.blit(text, rect)
+    
+    
     def draw_world(self, surface, w, cam_x):
         self.draw_background(surface, cam_x)
         first_col = int(cam_x // TILE)
@@ -313,22 +340,26 @@ class Game:
         self.draw_player(surface, w, cam_x)
 
     def draw_player(self, surface, w, cam_x):
-        p = w.player
-        if p.invulnerable > 0 and int(self.time * 12) % 2 == 0:
-            return
-        x, y = p.x - cam_x, p.y
-        step = math.sin(self.time * 18) * 4 if abs(p.vx) > 1 and p.on_ground else 0
-        pygame.draw.rect(surface, (30, 50, 110), (x + 4 + step, y + W.PLAYER_H - 8, 8, 8), border_radius=2)
-        pygame.draw.rect(surface, (30, 50, 110), (x + W.PLAYER_W - 12 - step, y + W.PLAYER_H - 8, 8, 8), border_radius=2)
-        body = pygame.Rect(x, y, W.PLAYER_W, W.PLAYER_H - 6)
-        pygame.draw.rect(surface, BLUE, body, border_radius=7)
-        pygame.draw.rect(surface, (30, 70, 160), body, width=2, border_radius=7)
-        pygame.draw.rect(surface, RED, (x - 1, y + 3, W.PLAYER_W + 2, 6), border_radius=3)      # headband
-        for eye_x in (x + 8, x + 19):
-            eye_x += p.facing * 2
-            pygame.draw.circle(surface, WHITE, (int(eye_x), int(y + 15)), 4)
-            pygame.draw.circle(surface, BLACK, (int(eye_x + p.facing * 1.5), int(y + 15)), 2)
-
+            p = w.player
+    
+            if p.invulnerable > 0 and int(self.time * 12) % 2 == 0:
+                return
+    
+            image = self.player_image
+    
+            if p.facing < 0:
+                image = pygame.transform.flip(
+                    self.player_image, True, False
+                )
+    
+            # Position the bigger image so its feet align
+            # with the bottom of the original player hitbox.
+            screen_x = round(p.x - cam_x)
+            screen_y = round(p.y + W.PLAYER_H - image.get_height())
+    
+            surface.blit(image, (screen_x, screen_y))
+        
+        
     def draw_hud(self, surface, w):
         bar = pygame.Surface((WIDTH, 40), pygame.SRCALPHA)
         bar.fill((10, 15, 35, 150))
@@ -346,10 +377,10 @@ class Game:
         self.panel(surface, rect, 225)
         self.text(surface, "How to play", 44, GOLD, center=(WIDTH // 2, 145))
         lines = ["Move: arrow keys or A / D", "Jump: Space, Up or W (hold to jump higher)",
-                 "Collect coins, reach the flag at the end of each level",
-                 "Jump on enemies to defeat them, spikes and sides hurt",
-                 "Falling into a pit costs a life", "P or Esc: pause     M: mute sound",
-                 "Press any key to close this help"]
+                "Collect coins, reach the flag at the end of each level",
+                "Jump on enemies to defeat them, spikes and sides hurt",
+                "Falling into a pit costs a life", "P or Esc: pause     M: mute sound",
+                "Press any key to close this help"]
         for i, line in enumerate(lines):
             self.text(surface, line, 28, WHITE, center=(WIDTH // 2, 195 + i * 36))
 

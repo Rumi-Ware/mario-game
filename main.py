@@ -35,4 +35,4 @@ async def main():
 
     pygame.quit()
 
-asyncio.create_task(main())
+asyncio.run(main())
