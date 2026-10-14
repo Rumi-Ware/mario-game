@@ -304,7 +304,7 @@ class PlayabilityTests(unittest.TestCase):
             self.assertIn(level["name"], recorded, f"No recorded run for {level['name']}. Run: python solver.py")
             w = solver.replay(index, recorded[level["name"]])
             self.assertEqual(w.status, "complete",
-                             f"{level['name']} changed and the recorded run no longer finishes it. Run: python solver.py")
+                            f"{level['name']} changed and the recorded run no longer finishes it. Run: python solver.py")
 
     @unittest.skipUnless(os.environ.get("RUN_SLOW_TESTS"), "slow: set RUN_SLOW_TESTS=1 to run the solver live")
     def test_solver_can_finish_every_level_live(self):

@@ -1,10 +1,10 @@
 """Level maps for the platformer, drawn as text so they are easy to edit.
 
 Legend
-  .  empty space          #  solid ground or platform
-  o  coin                 ^  spikes (hurt you)
-  E  walking enemy        P  player start (exactly one)
-  F  goal flag (exactly one)
+    .  empty space          #  solid ground or platform
+    o  coin                 ^  spikes (hurt you)
+    E  walking enemy        P  player start (exactly one)
+    F  goal flag (exactly one)
 
 Every row of a level must have the same length, and every level must have
 exactly 14 rows. Each character is one 40x40 pixel tile.

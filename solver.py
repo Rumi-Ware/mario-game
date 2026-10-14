@@ -112,7 +112,7 @@ def record_all():
     for i, level in enumerate(levels.LEVELS):
         w, script = solve(i)
         print(f"{level['name']}: {w.status}  time {w.time:.1f}s  lives left {w.lives}  "
-              f"coins {w.coins_collected}/{w.total_coins}")
+                f"coins {w.coins_collected}/{w.total_coins}")
         if w.status != "complete":
             print("  This level could not be finished by the computer player. It may be too hard or impossible.")
             return False
