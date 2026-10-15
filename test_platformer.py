@@ -59,10 +59,10 @@ def run(w, frames, move=0, jump_first=False, held=False):
 
 
 class LevelTests(unittest.TestCase):
-    def test_there_are_three_levels(self):
-        self.assertEqual(len(levels.LEVELS), 3)
+    def test_there_are_four_levels(self):
+        self.assertEqual(len(levels.LEVELS), 4)
         names = [level["name"] for level in levels.LEVELS]
-        self.assertEqual(len(set(names)), 3)
+        self.assertEqual(len(set(names)), 4)
 
     def test_every_level_is_valid(self):
         for level in levels.LEVELS:
